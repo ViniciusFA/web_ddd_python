@@ -126,6 +126,16 @@
     color: #333;
     font-size: 2rem;
   }
+
+  .dontHaveAccount {
+    text-align: center; /* Centraliza o texto dentro do parágrafo */
+    font-size: 16px; /* Ajusta o tamanho da fonte, se necessário */
+    margin-top: 20px; /* Adiciona um espaçamento superior para dar um pouco de respiro */
+  }
+
+  .buttonHand {
+    cursor: pointer; /* Faz com que o cursor se torne uma mãozinha ao passar sobre o botão */
+  }
   
   /* Responsividade */
   @media (max-width: 768px) {
