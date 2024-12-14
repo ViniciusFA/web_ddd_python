@@ -1,0 +1,158 @@
+/* Estilo geral */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  
+  /* Cabeçalho e Navegação */
+  nav {
+    background-color: #333;
+    color: white;
+    padding: 15px;
+  }
+  
+  nav h1 {
+    display: inline-block;
+    font-size: 24px;
+  }
+  
+  nav ul {
+    list-style: none;
+    float: right;
+  }
+  
+  nav ul li {
+    display: inline;
+    margin-left: 20px;
+  }
+  
+  nav ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+  }
+  
+  nav ul li a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Flash message */
+  .flash {
+    background-color: #ffcccc;
+    color: #cc0000;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #cc0000;
+    border-radius: 5px;
+  }
+  
+  /* Formulário de Login e Registro */
+  form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    margin: 50px auto;
+  }
+  
+  form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+
+  form input[type="text"], form input[type="username"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  form input[type="text"], form input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+
+  form input[type="text"], form input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  form input[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+  }
+  
+  form input[type="submit"]:hover {
+    background-color: #555;
+  }
+  
+  /* Estilo da seção de conteúdo */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  header {
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  h1 {
+    color: #333;
+    font-size: 2rem;
+  }
+
+  .dontHaveAccount {
+    text-align: center; /* Centraliza o texto dentro do parágrafo */
+    font-size: 16px; /* Ajusta o tamanho da fonte, se necessário */
+    margin-top: 20px; /* Adiciona um espaçamento superior para dar um pouco de respiro */
+  }
+
+  .buttonHand {
+    cursor: pointer; /* Faz com que o cursor se torne uma mãozinha ao passar sobre o botão */
+  }
+  
+  /* Responsividade */
+  @media (max-width: 768px) {
+    nav ul {
+      float: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+  
+    nav ul li {
+      display: block;
+      margin: 5px 0;
+    }
+  
+    form {
+      width: 90%;
+      margin-top: 20px;
+    }
+  }
+  
