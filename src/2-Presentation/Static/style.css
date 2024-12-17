@@ -5,17 +5,24 @@
     box-sizing: border-box;
   }
   
-  body {
+  /* body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f9;
     color: #333;
     line-height: 1.6;
     padding: 20px;
+  } */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f9fc;
+    margin: 0;
+    padding: 0;
+    color: #333;
   }
   
   /* Cabeçalho e Navegação */
   nav {
-    background-color: #333;
+    background-color: #4CAF50;
     color: white;
     padding: 15px;
   }
@@ -23,6 +30,7 @@
   nav h1 {
     display: inline-block;
     font-size: 24px;
+    color: white;
   }
   
   nav ul {
@@ -98,7 +106,7 @@
   form input[type="submit"] {
     width: 100%;
     padding: 10px;
-    background-color: #333;
+    background-color: #4CAF50;
     color: white;
     border: none;
     border-radius: 5px;
@@ -116,14 +124,15 @@
     padding: 20px;
   }
   
-  header {
+  /* header {
     font-size: 2em;
     text-align: center;
     margin-bottom: 20px;
-  }
+  } */
+   
   
   h1 {
-    color: #333;
+    color: #4CAF50;
     font-size: 2rem;
   }
 
