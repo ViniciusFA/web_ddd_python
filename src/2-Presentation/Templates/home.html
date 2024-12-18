@@ -1,107 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI for Autism</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f9fc;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 20px;
-            text-align: center;
-        }
-        nav {
-            display: flex;
-            justify-content: center;
-            background-color: #4CAF50;
-            padding: 10px;
-        }
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-size: 18px;
-        }
-        nav a:hover {
-            text-decoration: underline;
-        }
-        .main {
-            padding: 20px;
-            text-align: center;
-        }
-        .main h1 {
-            color: #4CAF50;
-        }
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .feature {
-            background-color: white;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            padding: 15px;
-            text-align: left;
-        }
-        .feature h2 {
-            font-size: 20px;
-            color: #4CAF50;
-        }
-        footer {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            /* padding: 10px; */
-            position: relative;
-            bottom: 0;
-            width: 100%;
-            margin-top: 16%;
-        }
-    </style>
-</head>
+{% extends "base.html" %}
 
-<body>
-    <header>
-        <h1>Welcome to AI for Autism</h1>
-    </header>
-    <nav>
-        <a href="#contact">Contact</a>
-        <a href="#features">Features</a>
-        <a href="#about">About</a>
-    </nav>
-    <div class="main">
-        <h1>Making Technology Inclusive</h1>
-        <p>Our platform leverages AI to create personalized tools for individuals on the autism spectrum, focusing on communication, learning, and social interaction.</p>
-        <div class="features">
-            <div class="feature">
-                <h2>Interactive Chat</h2>
-                <p>Engage with AI-powered chat tailored to support communication preferences.</p>
-            </div>
-            <div class="feature">
-                <h2>Video Tutorials</h2>
-                <p>Access step-by-step guides designed to enhance learning at your own pace.</p>
-            </div>
-            <div class="feature">
-                <h2>Accessible Design</h2>
-                <p>Experience a user-friendly interface crafted with inclusivity in mind.</p>
-            </div>
-        </div>
-    </div>
-    <footer>
-        <p>&copy; 2024 AI for Autism. All Rights Reserved.</p>
-    </footer>
-</body>
-</html>
+{% block title %}AI for Autism{% endblock %}
+
+{% block header %}
+  <h1>Welcome to AI for Autism</h1>
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+  <nav>
+    <a href="#contact">Contact</a>
+    <a href="#features">Features</a>
+    <a href="#about">About</a>
+  </nav>
+
+  <div class="main">
+      <h1>Making Technology Inclusive</h1>
+      <p>Our platform leverages AI to create personalized tools for individuals on the autism spectrum, focusing on communication, learning, and social interaction.</p>
+      
+      <div class="features">
+          <div class="feature">
+              <h2>Interactive Chat</h2>
+              <p>Engage with AI-powered chat tailored to support communication preferences.</p>
+          </div>
+          <div class="feature">
+              <h2>Video Tutorials</h2>
+              <p>Access step-by-step guides designed to enhance learning at your own pace.</p>
+          </div>
+          <div class="feature">
+              <h2>Accessible Design</h2>
+              <p>Experience a user-friendly interface crafted with inclusivity in mind.</p>
+          </div>
+      </div>
+  </div>
+{% endblock %}

@@ -145,6 +145,16 @@
   .buttonHand {
     cursor: pointer; /* Faz com que o cursor se torne uma mãozinha ao passar sobre o botão */
   }
+
+  .forgotPassword {
+    text-align: center;    
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  .forgotPassword a {    
+    color: blue;
+    text-decoration: underline;
+  }
   
   /* Responsividade */
   @media (max-width: 768px) {
