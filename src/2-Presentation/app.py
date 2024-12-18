@@ -6,6 +6,8 @@ from os.path import abspath, dirname, join
 # Adicionar o caminho do diretório 5-Domain ao sys.path
 BASE_DIR = dirname(dirname(abspath(__file__)))  # Caminho do diretório principal
 path.append(join(BASE_DIR, "5-Domain/Model"))
+# Mock database for messages
+messages = []
 
 from model import User, db  # Importa o db do arquivo model.py
 
@@ -31,7 +33,7 @@ def login():
         # Aqui você pode adicionar a lógica de autenticação
         if existing_user:  # If user exists
             session['user_id'] = username
-            return render_template('home.html')
+            return redirect('/home')
         else:
             flash("Invalid username or password")
     return render_template('login.html')
@@ -104,13 +106,40 @@ def home():
     return render_template('base.html', title="Login", name="Usuário")
 
 # Rota da Home
-app.route('/home')
+@app.route('/home')
 def main():
     return render_template('home.html')
 
 @app.route('/sobre')
 def sobre():
     return "Esta é uma página sobre a aplicação."
+
+@app.route('/chat', methods=['GET', 'POST'])
+def chat():
+    global messages
+
+    if request.method == 'POST':
+        user_message = request.form.get('message')
+        if user_message:
+            # Append the user's message
+            messages.append({"sender": "You", "text": user_message})
+
+            # Generate a response from the AI
+            ai_response = ai_chat_response(user_message)
+            messages.append({"sender": "AI", "text": ai_response}) 
+    return render_template('home.html', messages=messages)
+
+def ai_chat_response(user_message):
+    """
+    Mock AI response generator. Replace this with actual AI logic (e.g., OpenAI GPT).
+    """
+    responses = {
+        "hello": "Hi there! How can I assist you today?",
+        "how are you": "I'm just a bunch of code, but I'm here to help you!",
+        "bye": "Goodbye! Have a great day!"
+    }
+    default_response = "I'm sorry, I didn't understand that. Can you rephrase?"
+    return responses.get(user_message.lower(), default_response)
 
 # Inicializar o SQLAlchemy com a aplicação
 db.init_app(app)
