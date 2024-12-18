@@ -76,6 +76,26 @@ def register():
 
     return render_template('register.html')
 
+@auth_template.route('/forgot-password', methods=['GET', 'POST'])
+def forgot_password():
+    email = None  # Inicialize a variável para evitar o erro de escopo
+
+    if request.method == 'POST':
+        email = request.form.get('email')  # Obtenha o e-mail do formulário
+
+        if not email:  # Validação básica
+            flash("O campo E-mail é obrigatório!", "error")
+        else:
+            existing_user = get_user_by_email(email)
+            if existing_user:  # Se o usuário existir
+                # Lógica para enviar o e-mail de redefinição de senha
+                flash('Password reset instructions have been sent to your email.', 'success')
+                return redirect(url_for('auth.login'))
+            else:
+                flash('No account found with this email address.', 'error')
+
+    return render_template('forgot_password.html')
+
 # Registrando o Blueprint
 app.register_blueprint(auth_template, url_prefix='/auth')
 
@@ -102,11 +122,18 @@ with app.app_context():
 def get_user_by_username_and_password(username, password):
     return User.query.filter_by(username=username, password=password).first()
 
+#Criar uma camada que conversa com o banco de dados
+def get_user_by_email(email):
+    return User.query.filter_by(email=email).first()
+
+#Criar uma camada que conversa com o banco de dados
+def get_user_by_username(username):
+    return User.query.filter_by(username=username).first()
+
 # Simulação de um banco de dados para o exemplo
 USERS = {
     1: {"username": "test_user"}
 }
-
     
 @app.before_request
 def load_logged_in_user():
