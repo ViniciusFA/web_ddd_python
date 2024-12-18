@@ -33,4 +33,52 @@
           </div>
       </div>
   </div>
+
+  <!-- Chat Button -->
+<div id="chat-widget">
+  <button id="chat-toggle" onclick="toggleChat()">💬 Chat</button>
+  <div id="chat-box" style="display: none;">
+      <div id="chat-header" class="buttonHand" onclick="toggleChat()">
+          <h3>AI Chat</h3>
+      </div>
+      <!--ARRUMAR O HTML DENTRO PARA RECEBER O MESSAGE (VERIFICAR NO CHATGPT)-->
+      <div id="chat-messages">
+        {% for message in messages %}
+        <p><strong>{{ message.sender }}:</strong> {{ message.text }}</p>
+        {% endfor %}
+      </div>
+      <form id="chat-form" method="post" action="{{ url_for('chat') }}">
+          <input type="text" name="message" id="chat-input" placeholder="Type your message..." required>
+          <button type="submit">Send</button>
+      </form>
+  </div>
+</div>
+
+<script>
+  function toggleChat() {
+    const chatToggleButton = document.getElementById('chat-toggle');  
+      const chatBox = document.getElementById('chat-box');
+
+      const isChatOpen = chatBox.style.display === 'block';
+      chatToggleButton.style.display = isChatOpen ? 'block' : 'none';
+      chatBox.style.display = isChatOpen ? 'none' : 'block';
+
+      // Salva o estado do chat no localStorage
+      localStorage.setItem('chatOpen', !isChatOpen);
+
+      // Salva o estado do chat no localStorage
+      localStorage.setItem('chatOpen', !isChatOpen);
+    }
+
+    // Restaura o estado do chat ao carregar a página
+  document.addEventListener('DOMContentLoaded', () => {
+    const chatBox = document.getElementById('chat-box');
+    const chatToggleButton = document.getElementById('chat-toggle');
+
+    const isChatOpen = localStorage.getItem('chatOpen') === 'true';
+    chatBox.style.display = isChatOpen ? 'block' : 'none';
+    chatToggleButton.style.display = isChatOpen ? 'none' : 'block';
+  });
+
+</script>
 {% endblock %}
