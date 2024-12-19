@@ -1,7 +1,11 @@
 from flask import Flask, Blueprint, render_template,  g, session, request, flash, redirect, url_for, session
+from google.cloud.dialogflow_v2 import SessionsClient, types    
 import os
 from sys import path
 from os.path import abspath, dirname, join
+from dotenv import load_dotenv
+
+load_dotenv()  # Isso carrega automaticamente as variáveis do arquivo .env
 
 # Adicionar o caminho do diretório 5-Domain ao sys.path
 BASE_DIR = dirname(dirname(abspath(__file__)))  # Caminho do diretório principal
@@ -15,7 +19,10 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Generate random secret key 
 
 # Configurar o banco de dados SQLite
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL')
+
+# Configurar as credenciais do Dialogflow
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "dialogflow_credentials.json"
 
 
 # Criando o Blueprint para autenticação
@@ -127,19 +134,36 @@ def chat():
             # Generate a response from the AI
             ai_response = ai_chat_response(user_message)
             messages.append({"sender": "AI", "text": ai_response}) 
+        elif request.method == 'GET':
+            # Mensagem inicial do agente
+            initial_message = ai_chat_response("Oi")
+            messages.append({"sender": "AI", "text": initial_message})
+
     return render_template('home.html', messages=messages)
 
 def ai_chat_response(user_message):
+    print(user_message)
     """
-    Mock AI response generator. Replace this with actual AI logic (e.g., OpenAI GPT).
+    Envia a mensagem do usuário para o Dialogflow e retorna a resposta.
     """
-    responses = {
-        "hello": "Hi there! How can I assist you today?",
-        "how are you": "I'm just a bunch of code, but I'm here to help you!",
-        "bye": "Goodbye! Have a great day!"
-    }
-    default_response = "I'm sorry, I didn't understand that. Can you rephrase?"
-    return responses.get(user_message.lower(), default_response)
+    project_id = os.getenv('PROJECT_ID')  # Substitua pelo ID do seu projeto Dialogflow
+    session_id = 10  # Pode ser um identificador único (ex: ID do usuário ou sessão)
+    language_code = "pt-BR"  # Substitua pelo idioma configurado no agente
+
+    # Inicializa a sessão do Dialogflow
+    session_client = SessionsClient()
+    session = session_client.session_path(project_id, session_id)
+
+    # Cria a consulta
+    text_input = types.TextInput(text=user_message, language_code=language_code)
+    query_input = types.QueryInput(text=text_input)
+
+    # Envia a consulta para o Dialogflow
+    response = session_client.detect_intent(session=session, query_input=query_input)
+
+    # Extrai a resposta do agente
+    return response.query_result.fulfillment_text
+
 
 # Inicializar o SQLAlchemy com a aplicação
 db.init_app(app)
