@@ -1,0 +1,3 @@
+# Ignorar arquivos de chaves e credenciais
+src/2-Presentation/dialogflow_credentials.json
+src/2-Presentation/.env
