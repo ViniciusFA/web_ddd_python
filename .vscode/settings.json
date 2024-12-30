@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./src/5-Domain/Model",
+        "./src/1-Daemon"
+    ]
+}

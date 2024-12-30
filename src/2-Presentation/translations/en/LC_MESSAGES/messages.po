@@ -1,0 +1,50 @@
+msgid ""
+msgstr ""
+
+msgid "Welcome!"
+msgstr "Welcome!"
+
+msgid "Hello"
+msgstr "Hello"
+
+msgid "Log Out"
+msgstr "Log Out"
+
+msgid "Register"
+msgstr "Register"
+
+msgid "Log In"
+msgstr "Log In"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "confirmPassword"
+msgstr "Confirm Password"
+
+msgid "Don't have an account?"
+msgstr "Don't have an account?"
+
+msgid "Register here"
+msgstr "Register here"
+
+msgid "Reset it here"
+msgstr "Reset it here"
+
+msgid "Reset password"
+msgstr "Reset password"
+
+msgid "Forgot your password?"
+msgstr "Forgot your password?"
+
+msgid "Email"
+msgstr "E-mail"
+
+msgid "EnterYourEmailAddress"
+msgstr "Enter your email address below, and we'll send you instructions to reset your password."
+
+msgid "EnterYourEmail"
+msgstr "Enter your email"
