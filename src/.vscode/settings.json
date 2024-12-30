@@ -1,5 +1,7 @@
 {
     "python.analysis.extraPaths": [
-        "./5-Domain/Model"
+        "./5-Domain/Model",
+        "./1-Daemon",
+        "./2-Presentation"
     ]
 }

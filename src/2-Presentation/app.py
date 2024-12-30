@@ -1,9 +1,11 @@
-from flask import Flask, Blueprint, render_template,  g, session, request, flash, redirect, url_for, session
+from flask import Flask, Blueprint, render_template,  g, session, request, flash, redirect, url_for, session, jsonify
 from google.cloud.dialogflow_v2 import SessionsClient, types    
 import os
 from sys import path
 from os.path import abspath, dirname, join
 from dotenv import load_dotenv
+from flask_babel import Babel, _
+
 
 load_dotenv()  # Isso carrega automaticamente as variáveis do arquivo .env
 
@@ -18,12 +20,37 @@ from model import User, db  # Importa o db do arquivo model.py
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Generate random secret key 
 
+#region: Translate Babel
+
+app.config['BABEL_DEFAULT_LOCALE'] = 'pt'
+app.config['BABEL_SUPPORTED_LOCALES'] = ['pt', 'en']
+
+babel = Babel(app)
+
+# Função para detectar o idioma
+def get_locale():
+    # Usar o parâmetro `lang` na URL para detectar o idioma (ex: ?lang=pt)
+    lang = request.args.get('lang')
+    print(lang)
+    if lang in app.config['BABEL_SUPPORTED_LOCALES']:
+        return lang
+    return 'pt'  # Definir o idioma padrão
+
+babel.locale_selector_func = get_locale
+
+#endregion
+
+#region:: Secrets and Configurations
+
 # Configurar o banco de dados SQLite
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL')
 
 # Configurar as credenciais do Dialogflow
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "dialogflow_credentials.json"
 
+#endregion
+
+#region:: auth_template
 
 # Criando o Blueprint para autenticação
 auth_template = Blueprint('auth', __name__, template_folder='templates/auth')
@@ -31,6 +58,7 @@ auth_template = Blueprint('auth', __name__, template_folder='templates/auth')
 # Rota de login
 @auth_template.route('/login', methods=['GET', 'POST'])
 def login():
+    
     if request.method == 'POST':
         username = request.form.get('username')  # Captura o valor do campo 'username'
         password = request.form.get('password')  # Captura o valor do campo 'password'
@@ -43,7 +71,11 @@ def login():
             return redirect('/home')
         else:
             flash("Invalid username or password")
-    return render_template('login.html')
+
+    return render_template('login.html',
+                           login=_("Log In"), username=_("Username"),password=_("Password"), 
+                           dontHaveAccount=_("Don't have an account?"), registerHere=_("Register here"),
+                           forgotYourPassword=_("Forgot your password?"), resetItHere=_("Reset it here"))
 
 @auth_template.route('/logout')
 def logout():
@@ -83,7 +115,10 @@ def register():
         flash("Usuário registrado com sucesso!", "success")
         return redirect(url_for('auth.login'))  # Redirecionar para a página de login
 
-    return render_template('register.html')
+    return render_template('register.html', 
+                           register=_("Register"), username=_("Username"),
+                           email=_("Email"),password=_("Password"),
+                           confirmPassword=_("confirmPassword"))
 
 @auth_template.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
@@ -103,14 +138,27 @@ def forgot_password():
             else:
                 flash('No account found with this email address.', 'error')
 
-    return render_template('forgot_password.html')
+
+
+    return render_template('forgot_password.html', 
+                           forgotYourPassword=_("Forgot your password?"), enterYourEmailAddress=_("EnterYourEmailAddress"),
+                           email=_("Email"), enterYourEmail=_("EnterYourEmail"))
 
 # Registrando o Blueprint
 app.register_blueprint(auth_template, url_prefix='/auth')
 
+#endregion
+
+#region:: app
+
 @app.route('/')  # Define a URL raiz (/) para a função home.
 def home():
-    return render_template('base.html', title="Login", name="Usuário")
+    welcome = _("Welcome!")
+    hello = _("Hello")
+    logout = _("Log Out")
+    register = _("Register")
+    login = _("Log In")
+    return render_template('base.html', welcome=welcome, hello=hello, logout=logout, register=register, login=login)
 
 # Rota da Home
 @app.route('/home')
@@ -171,6 +219,10 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+#endregion
+
+#region:: Database Methods - Move it to correct layers
+
 #Criar uma camada que conversa com o banco de dados
 def get_user_by_username_and_password(username, password):
     return User.query.filter_by(username=username, password=password).first()
@@ -187,6 +239,8 @@ def get_user_by_username(username):
 USERS = {
     1: {"username": "test_user"}
 }
+
+#endregion
     
 @app.before_request
 def load_logged_in_user():
