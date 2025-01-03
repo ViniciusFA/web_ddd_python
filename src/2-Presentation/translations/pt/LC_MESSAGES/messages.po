@@ -48,3 +48,6 @@ msgstr "Digite seu endereço de e-mail abaixo e enviaremos instruções para red
 
 msgid "EnterYourEmail"
 msgstr "Digite o seu E-mail"
+
+msgid "UserPasswordInvalid"
+msgstr "Usuário ou Senha inválidos"

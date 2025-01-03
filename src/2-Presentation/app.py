@@ -5,9 +5,13 @@ from sys import path
 from os.path import abspath, dirname, join
 from dotenv import load_dotenv
 from flask_babel import Babel, _
+import aiohttp
+import asyncio
 
 
 load_dotenv()  # Isso carrega automaticamente as variáveis do arquivo .env
+
+base_backend_url_user = "https://localhost:44359/api/User/";
 
 # Adicionar o caminho do diretório 5-Domain ao sys.path
 BASE_DIR = dirname(dirname(abspath(__file__)))  # Caminho do diretório principal
@@ -60,17 +64,26 @@ auth_template = Blueprint('auth', __name__, template_folder='templates/auth')
 def login():
     
     if request.method == 'POST':
-        username = request.form.get('username')  # Captura o valor do campo 'username'
-        password = request.form.get('password')  # Captura o valor do campo 'password'
+        username = request.form.get('username')  # Get the username value
+        password = request.form.get('password')  # Get the password value
 
-        existing_user = get_user_by_username_and_password(username, password)
-
-        # Aqui você pode adicionar a lógica de autenticação
-        if existing_user:  # If user exists
-            session['user_id'] = username
-            return redirect('/home')
-        else:
-            flash("Invalid username or password")
+        # Async function
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            existing_user = loop.run_until_complete(get_user_by_username_and_password(username, password))
+            print(existing_user)
+            if(existing_user is None):
+                flash(_("UserPasswordInvalid"))
+            else:
+                session['user_id'] = username
+                return redirect('/home')
+        except Exception as e:
+            flash(f"Error connecting to backend: {str(e)}")
+            return render_template('login.html',
+                                   login=_("Log In"), username=_("Username"), password=_("Password"),
+                                   dontHaveAccount=_("Don't have an account?"), registerHere=_("Register here"),
+                                   forgotYourPassword=_("Forgot your password?"), resetItHere=_("Reset it here"))
 
     return render_template('login.html',
                            login=_("Log In"), username=_("Username"),password=_("Password"), 
@@ -224,8 +237,19 @@ with app.app_context():
 #region:: Database Methods - Move it to correct layers
 
 #Criar uma camada que conversa com o banco de dados
-def get_user_by_username_and_password(username, password):
-    return User.query.filter_by(username=username, password=password).first()
+async def get_user_by_username_and_password(username, password):
+     connector = aiohttp.TCPConnector(ssl=False)  # Disable SSL 
+     async with aiohttp.ClientSession(connector=connector) as session:
+        params = {'username': username, 'password': password}
+        async with session.get(base_backend_url_user + "GetUserByUsernameAndPassword", params=params) as response:
+            if response.status == 200:
+                return await response.json()  # User Found
+            elif response.status == 204:
+                return None  # User was not found
+            elif response.status == 404:
+                return None  # User was not found
+            else:
+                raise Exception(f"Backend error: {response.status}")
 
 #Criar uma camada que conversa com o banco de dados
 def get_user_by_email(email):
