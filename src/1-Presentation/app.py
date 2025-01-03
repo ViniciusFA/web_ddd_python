@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, render_template,  g, session, request, flash, redirect, url_for, session, jsonify
+from flask import Flask, Blueprint, render_template, session, request, flash, redirect, url_for, session
 from google.cloud.dialogflow_v2 import SessionsClient, types    
 import os
 from sys import path
@@ -18,8 +18,6 @@ BASE_DIR = dirname(dirname(abspath(__file__)))  # Caminho do diretório principa
 path.append(join(BASE_DIR, "5-Domain/Model"))
 # Mock database for messages
 messages = []
-
-from model import User, db  # Importa o db do arquivo model.py
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)  # Generate random secret key 
@@ -115,15 +113,10 @@ def register():
             return redirect(url_for('auth.register'))      
         
         # Verificar se o usuário já existe
-        existing_user = User.query.filter_by(username=username).first()
-        if existing_user:
-            flash("Usuário já existe. Tente outro nome.", "error")
-            return redirect(url_for('auth.register'))
+        # if existing_user:
+        #     flash("Usuário já existe. Tente outro nome.", "error")
+        #     return redirect(url_for('auth.register'))
 
-        # Criar um novo usuário e salvar no banco
-        new_user = User(username=username, password=password, email=email)
-        db.session.add(new_user)
-        db.session.commit()
 
         flash("Usuário registrado com sucesso!", "success")
         return redirect(url_for('auth.login'))  # Redirecionar para a página de login
@@ -225,13 +218,6 @@ def ai_chat_response(user_message):
     # Extrai a resposta do agente
     return response.query_result.fulfillment_text
 
-
-# Inicializar o SQLAlchemy com a aplicação
-db.init_app(app)
-
-with app.app_context():
-    db.create_all()
-
 #endregion
 
 #region:: Database Methods - Move it to correct layers
@@ -251,28 +237,16 @@ async def get_user_by_username_and_password(username, password):
             else:
                 raise Exception(f"Backend error: {response.status}")
 
-#Criar uma camada que conversa com o banco de dados
-def get_user_by_email(email):
-    return User.query.filter_by(email=email).first()
-
-#Criar uma camada que conversa com o banco de dados
-def get_user_by_username(username):
-    return User.query.filter_by(username=username).first()
-
-# Simulação de um banco de dados para o exemplo
-USERS = {
-    1: {"username": "test_user"}
-}
 
 #endregion
     
-@app.before_request
-def load_logged_in_user():
-    user_id = session.get('user_id')  # Suponha que 'user_id' é salvo na sessão
-    if user_id is None:
-        g.user = None
-    else:
-        g.user = USERS.get(user_id)  # Busca o usuário do "banco de dados" fictício
+# @app.before_request
+# def load_logged_in_user():
+#     user_id = session.get('user_id')  # Suponha que 'user_id' é salvo na sessão
+#     if user_id is None:
+#         g.user = None
+#     else:
+#         g.user = USERS.get(user_id)  # Busca o usuário do "banco de dados" fictício
 
 if __name__ == '__main__':
     app.run(debug=True)  # Ativa o modo de desenvolvimento
