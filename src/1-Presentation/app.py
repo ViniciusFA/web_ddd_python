@@ -33,7 +33,6 @@ babel = Babel(app)
 def get_locale():
     # Usar o parâmetro `lang` na URL para detectar o idioma (ex: ?lang=pt)
     lang = request.args.get('lang')
-    print(lang)
     if lang in app.config['BABEL_SUPPORTED_LOCALES']:
         return lang
     return 'pt'  # Definir o idioma padrão
@@ -70,7 +69,6 @@ def login():
         asyncio.set_event_loop(loop)
         try:
             existing_user = loop.run_until_complete(get_user_by_username_and_password(username, password))
-            print(existing_user)
             if(existing_user is None):
                 flash(_("UserPasswordInvalid"))
             else:
@@ -105,21 +103,31 @@ def register():
 
         # Validação básica (campos obrigatórios)
         if not username or not password or not confirmpassword or not email:
-            flash("Todos os campos são obrigatórios!", "error")
+            flash(_("AllFieldsMandatory"), "error")
             return redirect(url_for('auth.register'))
         
         if password != confirmpassword:
-            flash("A senha e a confirmação de senha não conferem!", "error")
+            flash(_("PasswordConfirmationDoNotMatch"), "error")
             return redirect(url_for('auth.register'))      
         
-        # Verificar se o usuário já existe
-        # if existing_user:
-        #     flash("Usuário já existe. Tente outro nome.", "error")
-        #     return redirect(url_for('auth.register'))
-
-
-        flash("Usuário registrado com sucesso!", "success")
-        return redirect(url_for('auth.login'))  # Redirecionar para a página de login
+        # Async function
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            existing_user = loop.run_until_complete(exists_user_by_username(username))
+            if(existing_user):
+                flash(_("UserAlreadyExists"))
+            else:
+                #registrar no back end o usuario
+                result = loop.run_until_complete(add_user(username, password, email))
+                flash(_("SuccessfullyRegisteredUser"), "success")
+                return redirect(url_for('auth.login'))  # Redirect to Login Page
+        except Exception as e:
+            flash(f"Error connecting to backend: {str(e)}")
+            return render_template('login.html',
+                                   login=_("Log In"), username=_("Username"), password=_("Password"),
+                                   dontHaveAccount=_("Don't have an account?"), registerHere=_("Register here"),
+                                   forgotYourPassword=_("Forgot your password?"), resetItHere=_("Reset it here"))
 
     return render_template('register.html', 
                            register=_("Register"), username=_("Username"),
@@ -222,7 +230,6 @@ def ai_chat_response(user_message):
 
 #region:: Database Methods - Move it to correct layers
 
-#Criar uma camada que conversa com o banco de dados
 async def get_user_by_username_and_password(username, password):
      connector = aiohttp.TCPConnector(ssl=False)  # Disable SSL 
      async with aiohttp.ClientSession(connector=connector) as session:
@@ -237,7 +244,43 @@ async def get_user_by_username_and_password(username, password):
             else:
                 raise Exception(f"Backend error: {response.status}")
 
+async def exists_user_by_username(username):
+     connector = aiohttp.TCPConnector(ssl=False)  # Disable SSL 
+     async with aiohttp.ClientSession(connector=connector) as session:
+        params = {'username': username}
+        async with session.get(base_backend_url_user + "ExistsUserByUsername", params=params) as response:
+            if response.status == 200:
+                return await response.json()  # Returns the API Response - True or False
+            elif response.status == 204:
+                return None  # 
+            elif response.status == 404:
+                return None  # 
+            else:
+                raise Exception(f"Backend error: {response.status}")
+            
+async def add_user(username, password, email):
+     connector = aiohttp.TCPConnector(ssl=False)  # Disable SSL 
+     async with aiohttp.ClientSession(connector=connector) as session:
+        headers = {
+            'accept': '*/*',
+            'Content-Type': 'application/json'
+        }
+        data = {
+            "username": username,
+            "password": password,
+            "email": email
+        }
 
+        async with session.post(base_backend_url_user, headers=headers, json=data) as response:
+            if response.status == 200:
+                return await response.json()  # Returns the API Response - True or False
+            elif response.status == 204:
+                return None  # 
+            elif response.status == 404:
+                return None  # 
+            else:
+                raise Exception(f"Backend error: {response.status}")
+                        
 #endregion
     
 # @app.before_request

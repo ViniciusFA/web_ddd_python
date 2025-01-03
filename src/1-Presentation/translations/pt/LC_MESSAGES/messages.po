@@ -51,3 +51,15 @@ msgstr "Digite o seu E-mail"
 
 msgid "UserPasswordInvalid"
 msgstr "Usuário ou Senha inválidos"
+
+msgid "PasswordConfirmationDoNotMatch"
+msgstr "A senha e a confirmação de senha não conferem"
+
+msgid "AllFieldsMandatory"
+msgstr "Todos os campos são obrigatórios"
+
+msgid "UserAlreadyExists"
+msgstr "Usuário já existe. Tente outro Usuário"
+
+msgid "SuccessfullyRegisteredUser"
+msgstr "Usuário registrado com sucesso"

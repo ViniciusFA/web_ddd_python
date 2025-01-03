@@ -51,3 +51,15 @@ msgstr "Enter your email"
 
 msgid "UserPasswordInvalid"
 msgstr "Invalid username or password"
+
+msgid "PasswordConfirmationDoNotMatch"
+msgstr "Password and password confirmation do not match"
+
+msgid "AllFieldsMandatory"
+msgstr "All fields are mandatory"
+
+msgid "UserAlreadyExists"
+msgstr "User already exists. Try another username"
+
+msgid "SuccessfullyRegisteredUser"
+msgstr "Successfully Registered User"
